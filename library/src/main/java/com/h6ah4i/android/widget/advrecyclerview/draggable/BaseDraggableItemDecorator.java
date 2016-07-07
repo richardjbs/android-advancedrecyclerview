@@ -21,6 +21,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorCompat;
 import android.support.v4.view.ViewPropertyAnimatorListener;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Interpolator;
 
@@ -75,6 +76,8 @@ abstract class BaseDraggableItemDecorator extends RecyclerView.ItemDecoration {
             animator.setInterpolator(mReturnToDefaultPositionInterpolator);
             animator.translationX(0.0f);
             animator.translationY(0.0f);
+            animator.scaleX(1.0f);
+            animator.scaleY(1.0f);
             animator.setListener(new ViewPropertyAnimatorListener() {
                 @Override
                 public void onAnimationStart(View view) {
@@ -85,6 +88,9 @@ abstract class BaseDraggableItemDecorator extends RecyclerView.ItemDecoration {
                     animator.setListener(null);
                     ViewCompat.setTranslationX(view, 0);
                     ViewCompat.setTranslationY(view, 0);
+                    ViewCompat.setScaleX(view, 1);
+                    ViewCompat.setScaleY(view, 1);
+                    Log.w("MY_TEST", "moveToDefaultPosition - onAnimationEnd");
 
                     // invalidate explicitly to refresh other decorations
                     if (view.getParent() instanceof RecyclerView) {
@@ -100,6 +106,10 @@ abstract class BaseDraggableItemDecorator extends RecyclerView.ItemDecoration {
         } else {
             ViewCompat.setTranslationX(targetView, 0);
             ViewCompat.setTranslationY(targetView, 0);
+            ViewCompat.setScaleX(targetView, 1);
+            ViewCompat.setScaleY(targetView, 1);
+
+            Log.w("MY_TEST", "moveToDefaultPosition - anim not supported. hard set");
         }
     }
 
@@ -110,6 +120,26 @@ abstract class BaseDraggableItemDecorator extends RecyclerView.ItemDecoration {
         }
         ViewCompat.setTranslationX(holder.itemView, x);
         ViewCompat.setTranslationY(holder.itemView, y);
+    }
+
+    protected static void setItemTranslationAndScale(RecyclerView rv, RecyclerView.ViewHolder holder, float x, float y, float scaleX, float scaleY) {
+        final RecyclerView.ItemAnimator itemAnimator = rv.getItemAnimator();
+        if (itemAnimator != null) {
+            itemAnimator.endAnimation(holder);
+        }
+        ViewCompat.setTranslationX(holder.itemView, x);
+        ViewCompat.setTranslationY(holder.itemView, y);
+        ViewCompat.setScaleX(holder.itemView, scaleX);
+        ViewCompat.setScaleY(holder.itemView, scaleY);
+    }
+
+    protected static void setItemScale(RecyclerView rv, RecyclerView.ViewHolder holder, float scaleX, float scaleY) {
+        final RecyclerView.ItemAnimator itemAnimator = rv.getItemAnimator();
+        if (itemAnimator != null) {
+            itemAnimator.endAnimation(holder);
+        }
+        ViewCompat.setScaleX(holder.itemView, scaleX);
+        ViewCompat.setScaleY(holder.itemView, scaleY);
     }
 
     private static boolean supportsViewPropertyAnimation() {

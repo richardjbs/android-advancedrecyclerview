@@ -223,6 +223,7 @@ public class RecyclerViewDragDropManager implements DraggableItemConstants {
     private DraggableItemWrapperAdapter mAdapter;
     /*package*/ RecyclerView.ViewHolder mDraggingItemViewHolder;
     private DraggingItemInfo mDraggingItemInfo;
+    private DraggingItemDecoratorFactory mDraggingItemDecoratorFactory;
     private DraggingItemDecorator mDraggingItemDecorator;
     private SwapTargetItemOperator mSwapTargetItemOperator;
     private int mLastTouchX;
@@ -252,6 +253,7 @@ public class RecyclerViewDragDropManager implements DraggableItemConstants {
      * Constructor.
      */
     public RecyclerViewDragDropManager() {
+        mDraggingItemDecoratorFactory = new DraggingItemDecoratorFactory();
         mInternalUseOnItemTouchListener = new RecyclerView.OnItemTouchListener() {
             @Override
             public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
@@ -415,6 +417,15 @@ public class RecyclerViewDragDropManager implements DraggableItemConstants {
      */
     public void setDraggingItemShadowDrawable(@Nullable NinePatchDrawable drawable) {
         mShadowDrawable = drawable;
+    }
+
+    /**
+     * Sets the ItemDecoratorFactory used to create a DraggingItemDecorator instance
+     *
+     * @param draggingItemDecoratorFactory the DraggingItemDecoratorFactory to be used
+     */
+    public void setDraggingItemDecoratorFactory(DraggingItemDecoratorFactory draggingItemDecoratorFactory) {
+        mDraggingItemDecoratorFactory = draggingItemDecoratorFactory;
     }
 
     /**
@@ -743,7 +754,7 @@ public class RecyclerViewDragDropManager implements DraggableItemConstants {
         // setup decorators
         mAdapter.onBindViewHolder(holder, holder.getLayoutPosition());
 
-        mDraggingItemDecorator = new DraggingItemDecorator(mRecyclerView, holder, mDraggableRange);
+        mDraggingItemDecorator = mDraggingItemDecoratorFactory.getItemDecorator(mRecyclerView, holder, mDraggableRange);
         mDraggingItemDecorator.setShadowDrawable(mShadowDrawable);
         mDraggingItemDecorator.start(e, mDraggingItemInfo);
 
