@@ -348,22 +348,6 @@ class DraggingItemDecorator extends BaseDraggableItemDecorator {
         int height = v.getHeight() + mShadowPadding.top + mShadowPadding.bottom;
 
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-
-        int newWidth = (int)(width * 1.2);
-        int newHeight = (int)(height * 1.2);
-
-        float scaleWidth = ((float) newWidth) / width;
-        float scaleHeight = ((float) newHeight) / height;
-
-        Matrix matrix = new Matrix();
-        matrix.postScale(scaleWidth, scaleHeight);
-        matrix.postRotate(20);
-
-        bitmap = Bitmap.createBitmap(bitmap, 0, 0, newWidth, newHeight, matrix, true);
-
-        width = bitmap.getWidth();
-        height = bitmap.getHeight();
-
         final Canvas canvas = new Canvas(bitmap);
 
         if (shadow != null) {
@@ -378,7 +362,23 @@ class DraggingItemDecorator extends BaseDraggableItemDecorator {
         v.draw(canvas);
         canvas.restoreToCount(savedCount);
 
-        return bitmap;
+        return getResizedBitmap(bitmap, (int)(width*1.1), (int)(height*1.1));
+    }
+
+    public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+
+        Bitmap resizedBitmap = Bitmap.createBitmap(
+                bm, 0, 0, width, height, matrix, false);
+        bm.recycle();
+        return resizedBitmap;
     }
 
     private void updateDraggingItemPosition(float translationX, int translationY) {
