@@ -17,8 +17,6 @@
 package com.h6ah4i.android.widget.advrecyclerview.draggable;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.MotionEvent;
 
 class ExpandableDraggingItemDecorator extends DraggingItemDecorator {
     @SuppressWarnings("unused")
@@ -74,33 +72,64 @@ class ExpandableDraggingItemDecorator extends DraggingItemDecorator {
         super(recyclerView, draggingItem, range);
     }
 
-    @Override
-    public void start(MotionEvent e, DraggingItemInfo draggingItemInfo) {
-        Log.w("MY_TEST", "start");
-        updateDraggingItemScale(mExpandedScaleX, mExpandedScaleY);
-        super.start(e, draggingItemInfo);
-    }
+//    @Override
+//    public void start(MotionEvent e, DraggingItemInfo draggingItemInfo) {
+//        Log.w("MY_TEST", "start");
+//        updateDraggingItemScale(mExpandedScaleX, mExpandedScaleY);
+//        ViewCompat.postInvalidateOnAnimation(mRecyclerView);
+//
+//        super.start(e, draggingItemInfo);
+//    }
 
 //    @Override
+//    public boolean refresh(boolean force)
+//    {
+//        final int prevTranslationX = mTranslationX;
+//        final int prevTranslationY = mTranslationY;
+//
+//        updateTranslationOffset();
+//
+//        final boolean updated = (prevTranslationX != mTranslationX) || (prevTranslationY != mTranslationY);
+//
+//        if (updated || force) {
+//            updateDraggingItemPosition(mTranslationX, mTranslationY);
+//            ViewCompat.postInvalidateOnAnimation(mRecyclerView);
+//        }
+//
+//        return updated;
+//    }
+
+
+//    @Override
+//    public boolean refresh(boolean force)
+//    {
+//        Log.w("MY_TEST", "refresh_");
+//        boolean updated = super.refresh(force);
+//        updateDraggingItemScale(mExpandedScaleX, mExpandedScaleY);
+//        ViewCompat.postInvalidateOnAnimation(mRecyclerView);
+//        return updated;
+//    }
+
+    //    @Override
 //    public void finish(boolean animate) {
 //        Log.w("ExpandableDraggingI", "finish");
 //        updateDraggingItemScale(1.0f, 1.0f);
 //        super.finish(animate);
 //    }
 
-    private void updateDraggingItemScale(float scaleX, float scaleY) {
-        final boolean updated = (mScaleX != scaleX) || (mScaleY != scaleY);
-        Log.w("MY_TEST", "updateDraggingItemScale - updated: " + updated);
-        // NOTE: Need to update the view position to make other decorations work properly while dragging
-        if (mDraggingItemViewHolder != null && updated) {
-            Log.w("MY_TEST", "updateDraggingItemScale.setItemScale x: " + scaleX + ", y: " + scaleY);
-            setItemScale(
-                    mRecyclerView, mDraggingItemViewHolder,
-                    scaleX,
-                    scaleY);
-
-            mScaleX = scaleX;
-            mScaleY = scaleY;
-        }
-    }
+//    private void updateDraggingItemScale(float scaleX, float scaleY) {
+//        final boolean updated = (mScaleX != scaleX) || (mScaleY != scaleY);
+//        Log.w("MY_TEST", "updateDraggingItemScale - updated: " + updated);
+//        // NOTE: Need to update the view position to make other decorations work properly while dragging
+//        if (mDraggingItemViewHolder != null && updated) {
+//            Log.w("MY_TEST", "updateDraggingItemScale.setItemScale x: " + scaleX + ", y: " + scaleY);
+//            setItemScale(
+//                    mRecyclerView, mDraggingItemViewHolder,
+//                    scaleX,
+//                    scaleY);
+//
+//            mScaleX = scaleX;
+//            mScaleY = scaleY;
+//        }
+//    }
 }

@@ -18,6 +18,7 @@ package com.h6ah4i.android.widget.advrecyclerview.draggable;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.drawable.NinePatchDrawable;
 import android.support.v4.view.ViewCompat;
@@ -216,7 +217,6 @@ class DraggingItemDecorator extends BaseDraggableItemDecorator {
         updateTranslationOffset();
 
         final boolean updated = (prevTranslationX != mTranslationX) || (prevTranslationY != mTranslationY);
-
         if (updated || force) {
             updateDraggingItemPosition(mTranslationX, mTranslationY);
             ViewCompat.postInvalidateOnAnimation(mRecyclerView);
@@ -347,7 +347,22 @@ class DraggingItemDecorator extends BaseDraggableItemDecorator {
         int width = v.getWidth() + mShadowPadding.left + mShadowPadding.right;
         int height = v.getHeight() + mShadowPadding.top + mShadowPadding.bottom;
 
-        final Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+        int newWidth = width *= 1.2;
+        int newHeight = height *= 1.2;
+
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+        matrix.postRotate(20);
+
+        bitmap = Bitmap.createBitmap(bitmap, 0, 0, newWidth, newHeight, matrix, true);
+
+        width = bitmap.getWidth();
+        height = bitmap.getHeight();
 
         final Canvas canvas = new Canvas(bitmap);
 
