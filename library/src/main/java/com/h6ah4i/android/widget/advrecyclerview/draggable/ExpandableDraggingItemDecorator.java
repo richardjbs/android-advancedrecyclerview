@@ -16,16 +16,18 @@
 
 package com.h6ah4i.android.widget.advrecyclerview.draggable;
 
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.graphics.drawable.NinePatchDrawable;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 class ExpandableDraggingItemDecorator extends DraggingItemDecorator {
     @SuppressWarnings("unused")
     private static final String TAG = "ExpandableDraggingItemDecorator";
 
-    private float mScaleX = 1.0f;
-    private float mScaleY = 1.0f;
-    private float mExpandedScaleX = 1.2f;
-    private float mExpandedScaleY = 1.2f;
+    private float mExpandedScaleX = 1.1f;
+    private float mExpandedScaleY = 1.1f;
 
 
     /**
@@ -72,64 +74,30 @@ class ExpandableDraggingItemDecorator extends DraggingItemDecorator {
         super(recyclerView, draggingItem, range);
     }
 
-//    @Override
-//    public void start(MotionEvent e, DraggingItemInfo draggingItemInfo) {
-//        Log.w("MY_TEST", "start");
-//        updateDraggingItemScale(mExpandedScaleX, mExpandedScaleY);
-//        ViewCompat.postInvalidateOnAnimation(mRecyclerView);
-//
-//        super.start(e, draggingItemInfo);
-//    }
+    @Override
+    protected Bitmap createDraggingItemImage(View v, NinePatchDrawable shadow)
+    {
+        Bitmap draggingItemImage = super.createDraggingItemImage(v, shadow);
 
-//    @Override
-//    public boolean refresh(boolean force)
-//    {
-//        final int prevTranslationX = mTranslationX;
-//        final int prevTranslationY = mTranslationY;
-//
-//        updateTranslationOffset();
-//
-//        final boolean updated = (prevTranslationX != mTranslationX) || (prevTranslationY != mTranslationY);
-//
-//        if (updated || force) {
-//            updateDraggingItemPosition(mTranslationX, mTranslationY);
-//            ViewCompat.postInvalidateOnAnimation(mRecyclerView);
-//        }
-//
-//        return updated;
-//    }
+        int newWidth = (int)(draggingItemImage.getWidth() * mExpandedScaleX);
+        int newHeight = (int)(draggingItemImage.getHeight() * mExpandedScaleY);
 
+        return getExpandedDraggingItemImage(draggingItemImage, newWidth, newHeight);
+    }
 
-//    @Override
-//    public boolean refresh(boolean force)
-//    {
-//        Log.w("MY_TEST", "refresh_");
-//        boolean updated = super.refresh(force);
-//        updateDraggingItemScale(mExpandedScaleX, mExpandedScaleY);
-//        ViewCompat.postInvalidateOnAnimation(mRecyclerView);
-//        return updated;
-//    }
+    public Bitmap getExpandedDraggingItemImage(Bitmap bm, int newWidth, int newHeight) {
+        int width = bm.getWidth();
+        int height = bm.getHeight();
 
-    //    @Override
-//    public void finish(boolean animate) {
-//        Log.w("ExpandableDraggingI", "finish");
-//        updateDraggingItemScale(1.0f, 1.0f);
-//        super.finish(animate);
-//    }
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
 
-//    private void updateDraggingItemScale(float scaleX, float scaleY) {
-//        final boolean updated = (mScaleX != scaleX) || (mScaleY != scaleY);
-//        Log.w("MY_TEST", "updateDraggingItemScale - updated: " + updated);
-//        // NOTE: Need to update the view position to make other decorations work properly while dragging
-//        if (mDraggingItemViewHolder != null && updated) {
-//            Log.w("MY_TEST", "updateDraggingItemScale.setItemScale x: " + scaleX + ", y: " + scaleY);
-//            setItemScale(
-//                    mRecyclerView, mDraggingItemViewHolder,
-//                    scaleX,
-//                    scaleY);
-//
-//            mScaleX = scaleX;
-//            mScaleY = scaleY;
-//        }
-//    }
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+
+        Bitmap resizedBitmap = Bitmap.createBitmap(
+                bm, 0, 0, width, height, matrix, false);
+        bm.recycle();
+        return resizedBitmap;
+    }
 }

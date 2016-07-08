@@ -18,7 +18,6 @@ package com.h6ah4i.android.widget.advrecyclerview.draggable;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.drawable.NinePatchDrawable;
 import android.support.v4.view.ViewCompat;
@@ -217,6 +216,7 @@ class DraggingItemDecorator extends BaseDraggableItemDecorator {
         updateTranslationOffset();
 
         final boolean updated = (prevTranslationX != mTranslationX) || (prevTranslationY != mTranslationY);
+
         if (updated || force) {
             updateDraggingItemPosition(mTranslationX, mTranslationY);
             ViewCompat.postInvalidateOnAnimation(mRecyclerView);
@@ -343,11 +343,12 @@ class DraggingItemDecorator extends BaseDraggableItemDecorator {
         return (mTranslationX == mTranslationRightLimit);
     }
 
-    private Bitmap createDraggingItemImage(View v, NinePatchDrawable shadow) {
+    protected Bitmap createDraggingItemImage(View v, NinePatchDrawable shadow) {
         int width = v.getWidth() + mShadowPadding.left + mShadowPadding.right;
         int height = v.getHeight() + mShadowPadding.top + mShadowPadding.bottom;
 
-        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        final Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
         final Canvas canvas = new Canvas(bitmap);
 
         if (shadow != null) {
@@ -362,23 +363,7 @@ class DraggingItemDecorator extends BaseDraggableItemDecorator {
         v.draw(canvas);
         canvas.restoreToCount(savedCount);
 
-        return getResizedBitmap(bitmap, (int)(width*1.1), (int)(height*1.1));
-    }
-
-    public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
-        int width = bm.getWidth();
-        int height = bm.getHeight();
-
-        float scaleWidth = ((float) newWidth) / width;
-        float scaleHeight = ((float) newHeight) / height;
-
-        Matrix matrix = new Matrix();
-        matrix.postScale(scaleWidth, scaleHeight);
-
-        Bitmap resizedBitmap = Bitmap.createBitmap(
-                bm, 0, 0, width, height, matrix, false);
-        bm.recycle();
-        return resizedBitmap;
+        return bitmap;
     }
 
     private void updateDraggingItemPosition(float translationX, int translationY) {
@@ -397,6 +382,7 @@ class DraggingItemDecorator extends BaseDraggableItemDecorator {
         }
 
         mIsScrolling = isScrolling;
+
     }
 
     public int getTranslatedItemPositionTop() {
