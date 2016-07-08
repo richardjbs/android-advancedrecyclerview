@@ -349,8 +349,8 @@ class DraggingItemDecorator extends BaseDraggableItemDecorator {
 
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 
-        int newWidth = width *= 1.2;
-        int newHeight = height *= 1.2;
+        int newWidth = (int)(width * 1.2);
+        int newHeight = (int)(height * 1.2);
 
         float scaleWidth = ((float) newWidth) / width;
         float scaleHeight = ((float) newHeight) / height;
@@ -397,7 +397,6 @@ class DraggingItemDecorator extends BaseDraggableItemDecorator {
         }
 
         mIsScrolling = isScrolling;
-
     }
 
     public int getTranslatedItemPositionTop() {
