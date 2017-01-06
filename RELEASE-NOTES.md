@@ -1,3 +1,42 @@
+## 0.10.2
+[Bug fixes]
+- Fix createDraggingItemImage() method regression (issue #325)
+
+## 0.10.1
+[Improvements]
+- Updated support library to v25.0.1
+
+[Bug fixes]
+- Backport official DefaultItemAnimator fixes to RefactoredDefaultAnimator (issue #324)
+- Improve dragging item image bitmap creation process (issue #319)
+
+
+## 0.10.0
+[New features]
+- Introduced ComposedAdapter
+- Introudced Headers and Footers support
+- Added new demos for new adapter related features
+- Made dragging item appearance controllable (issue #193, #292)
+- Added AFTER_SWIPE_REACTION_DO_NOTHING (pull request #308)
+- Added SwipeResultActionDoNothing and SwipeResultActionMoveToOrigin
+
+[Improvements]
+- Updated support library to v25.0.0
+
+[Bug fixes]
+- Small bug fixes
+
+
+## 0.9.3
+[New features]
+- Added `RecyclerViewExpandableItemManager.setDefaultGroupsExpandedState(boolean expanded)` (issue #281)
+- Added `SwipebleItemViewHolder.setProportionalSwipeAmountModeEnabled(boolean enabled)` (issue #286)
+- Added `RecyclerViewExpandableItemManager.notifyGroupItemChanged(int groupPosition, Object payload)`
+
+[Bug fixes]
+- Fixed item sliding animation not working bug (issue #285)
+
+
 ## 0.9.2
 [New features]
 - Added `void RecyclerViewDragDropManager.setItemMoveMode(@ItemMoveMode int mode)` (issue #253, #269)
