@@ -29,7 +29,7 @@ apply from: '../common/android-set-common-properties.gradle'
 android {
     defaultConfig {
         minSdkVersion 9
-        targetSdkVersion 23
+        targetSdkVersion 24
 
 
         def dataProps = new Properties()
@@ -54,12 +54,23 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:23.3.0'
-    compile 'com.android.support:recyclerview-v7:23.3.0'
+    compile 'com.android.support:appcompat-v7:24.0.0'
+    compile 'com.android.support:recyclerview-v7:24.0.0'
 }
 
 tasks.withType(JavaCompile) {
     options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked"
+}
+
+task makeJar(type: Copy) {
+    from('build/intermediates/bundles/release/')
+    into('build/outputs/')
+    include('classes.jar')
+    rename ('classes.jar', 'advancerecyclerview.jar')
+    into('release/') //you can change this directory where you want to copy your .jar
+}
+task clearJar(type: Delete) {
+    delete 'build/libs/myLib.jar'
 }
 
 // NOTE: this line should be place at end of the file
