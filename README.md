@@ -5,7 +5,7 @@ This RecyclerView extension library provides Google's Inbox app like swiping, Pl
 
 [ ![Download](https://api.bintray.com/packages/h6ah4i/maven/android-advancedrecyclerview/images/download.svg) ](https://bintray.com/h6ah4i/maven/android-advancedrecyclerview/_latestVersion)
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Advanced%20RecyclerView-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/1432)
-[![Method Count](https://img.shields.io/badge/Methods and size-core: 1684 | deps: 19003 | 230 KB-e91e63.svg) ](http://www.methodscount.com/?lib=com.h6ah4i.android.widget.advrecyclerview%3Aadvrecyclerview%3A0.10.2)
+[![Method Count](https://img.shields.io/badge/Methods%20and%20size-core:%201707%20%7C%20deps:%2021568%20%7C%20232%20KB-e91e63.svg) ](http://www.methodscount.com/?lib=com.h6ah4i.android.widget.advrecyclerview%3Aadvrecyclerview%3A0.10.5)
 ---
 
 ### Download the example app
@@ -32,7 +32,12 @@ Target platforms
 Latest version
 ---
 
-- Version 0.10.2  (November 27, 2016)   ([RELEASE NOTES](./RELEASE-NOTES.md))
+- Version 0.10.5  (March 25, 2017)   ([RELEASE NOTES](./RELEASE-NOTES.md))
+
+
+**Recent Breaking Change Info**
+
+- **v0.10.4:** `OnGroupExpandListener` and `OnGroupCollapseListener` takes `payload` parameter. (related: [issue #350](https://github.com/h6ah4i/android-advancedrecyclerview/issues/350))
 
 
 Getting started
@@ -42,7 +47,7 @@ This library is published on jCenter. Just add these lines to `build.gradle`.
 
 ```gradle
 dependencies {
-    compile ('com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.10.2@aar'){
+    compile ('com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.10.5@aar'){
         transitive=true
     }
 }
@@ -166,7 +171,7 @@ Primary classes/interfaces
 Other examples
 ---
 
-| 
+|
 ### iOS Mail app like swipe action
 
 <img src="images/other_example_ios_mail.png" width="200" />

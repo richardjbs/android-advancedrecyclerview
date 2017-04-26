@@ -40,6 +40,7 @@ class ExpandableRecyclerViewWrapperAdapter
 
     private static final String TAG = "ARVExpandableWrapper";
 
+    //
     // NOTE: Make accessible with short name
     private interface Constants extends ExpandableItemConstants {
     }
@@ -64,7 +65,7 @@ class ExpandableRecyclerViewWrapperAdapter
 
         mExpandableItemAdapter = getExpandableItemAdapter(adapter);
         if (mExpandableItemAdapter == null) {
-            throw new IllegalArgumentException("adapter does not implement RecyclerViewExpandableListManager");
+            throw new IllegalArgumentException("adapter does not implement ExpandableItemAdapter");
         }
 
         if (manager == null) {
@@ -74,7 +75,10 @@ class ExpandableRecyclerViewWrapperAdapter
         mExpandableListManager = manager;
 
         mPositionTranslator = new ExpandablePositionTranslator();
-        mPositionTranslator.build(mExpandableItemAdapter, mExpandableListManager.getDefaultGroupsExpandedState());
+        mPositionTranslator.build(
+                mExpandableItemAdapter,
+                ExpandablePositionTranslator.BUILD_OPTION_DEFAULT,
+                mExpandableListManager.getDefaultGroupsExpandedState());
 
         if (expandedItemsSavedState != null) {
             // NOTE: do not call hook routines and listener methods
@@ -196,16 +200,19 @@ class ExpandableRecyclerViewWrapperAdapter
         correctItemDragStateFlags(holder, groupPosition, childPosition);
 
         if (childPosition == RecyclerView.NO_POSITION) {
-            mExpandableItemAdapter.onBindGroupViewHolder(holder, groupPosition, viewType);
+            mExpandableItemAdapter.onBindGroupViewHolder(holder, groupPosition, viewType, payloads);
         } else {
-            mExpandableItemAdapter.onBindChildViewHolder(holder, groupPosition, childPosition, viewType);
+            mExpandableItemAdapter.onBindChildViewHolder(holder, groupPosition, childPosition, viewType, payloads);
         }
     }
 
     private void rebuildPositionTranslator() {
         if (mPositionTranslator != null) {
             long[] savedState = mPositionTranslator.getSavedStateArray();
-            mPositionTranslator.build(mExpandableItemAdapter, mExpandableListManager.getDefaultGroupsExpandedState());
+            mPositionTranslator.build(
+                    mExpandableItemAdapter,
+                    ExpandablePositionTranslator.BUILD_OPTION_DEFAULT,
+                    mExpandableListManager.getDefaultGroupsExpandedState());
 
             // NOTE: do not call hook routines and listener methods
             mPositionTranslator.restoreExpandedGroupItems(savedState, null, null, null);
@@ -690,9 +697,9 @@ class ExpandableRecyclerViewWrapperAdapter
         }
 
         if (expand) {
-            expandGroup(groupPosition, true);
+            expandGroup(groupPosition, true, null);
         } else {
-            collapseGroup(groupPosition, true);
+            collapseGroup(groupPosition, true, null);
         }
 
         return true;
@@ -700,25 +707,31 @@ class ExpandableRecyclerViewWrapperAdapter
 
     /*package*/ void expandAll() {
         if (!mPositionTranslator.isEmpty() && !mPositionTranslator.isAllExpanded()) {
-            mPositionTranslator.build(mExpandableItemAdapter, true);
+            mPositionTranslator.build(
+                    mExpandableItemAdapter,
+                    ExpandablePositionTranslator.BUILD_OPTION_EXPANDED_ALL,
+                    mExpandableListManager.getDefaultGroupsExpandedState());
             notifyDataSetChanged();
         }
     }
 
     /*package*/ void collapseAll() {
         if (!mPositionTranslator.isEmpty() && !mPositionTranslator.isAllCollapsed()) {
-            mPositionTranslator.build(mExpandableItemAdapter, false);
+            mPositionTranslator.build(
+                    mExpandableItemAdapter,
+                    ExpandablePositionTranslator.BUILD_OPTION_COLLAPSED_ALL,
+                    mExpandableListManager.getDefaultGroupsExpandedState());
             notifyDataSetChanged();
         }
     }
 
-    /*package*/ boolean collapseGroup(int groupPosition, boolean fromUser) {
+    /*package*/ boolean collapseGroup(int groupPosition, boolean fromUser, Object payload) {
         if (!mPositionTranslator.isGroupExpanded(groupPosition)) {
             return false;
         }
 
         // call hook method
-        if (!mExpandableItemAdapter.onHookGroupCollapse(groupPosition, fromUser)) {
+        if (!mExpandableItemAdapter.onHookGroupCollapse(groupPosition, fromUser, payload)) {
             return false;
         }
 
@@ -735,24 +748,24 @@ class ExpandableRecyclerViewWrapperAdapter
             final long packedPosition = ExpandableAdapterHelper.getPackedPositionForGroup(groupPosition);
             final int flatPosition = mPositionTranslator.getFlatPosition(packedPosition);
 
-            notifyItemChanged(flatPosition);
+            notifyItemChanged(flatPosition, payload);
         }
 
         // raise onGroupCollapse() event
         if (mOnGroupCollapseListener != null) {
-            mOnGroupCollapseListener.onGroupCollapse(groupPosition, fromUser);
+            mOnGroupCollapseListener.onGroupCollapse(groupPosition, fromUser, payload);
         }
 
         return true;
     }
 
-    /*package*/ boolean expandGroup(int groupPosition, boolean fromUser) {
+    /*package*/ boolean expandGroup(int groupPosition, boolean fromUser, Object payload) {
         if (mPositionTranslator.isGroupExpanded(groupPosition)) {
             return false;
         }
 
         // call hook method
-        if (!mExpandableItemAdapter.onHookGroupExpand(groupPosition, fromUser)) {
+        if (!mExpandableItemAdapter.onHookGroupExpand(groupPosition, fromUser, payload)) {
             return false;
         }
 
@@ -768,12 +781,12 @@ class ExpandableRecyclerViewWrapperAdapter
             final long packedPosition = ExpandableAdapterHelper.getPackedPositionForGroup(groupPosition);
             final int flatPosition = mPositionTranslator.getFlatPosition(packedPosition);
 
-            notifyItemChanged(flatPosition);
+            notifyItemChanged(flatPosition, payload);
         }
 
         // raise onGroupExpand() event
         if (mOnGroupExpandListener != null) {
-            mOnGroupExpandListener.onGroupExpand(groupPosition, fromUser);
+            mOnGroupExpandListener.onGroupExpand(groupPosition, fromUser, payload);
         }
 
         return true;
@@ -922,7 +935,7 @@ class ExpandableRecyclerViewWrapperAdapter
             notifyItemInserted(flatPosition);
 
             // raise onGroupExpand() event
-            raiseOnGroupExpandedSequentially(groupPosition, 1, false);
+            raiseOnGroupExpandedSequentially(groupPosition, 1, false, null);
         }
     }
 
@@ -934,7 +947,7 @@ class ExpandableRecyclerViewWrapperAdapter
 
             notifyItemRangeInserted(flatPosition, insertedCount);
 
-            raiseOnGroupExpandedSequentially(groupPositionStart, count, false);
+            raiseOnGroupExpandedSequentially(groupPositionStart, count, false, null);
         }
     }
 
@@ -976,10 +989,10 @@ class ExpandableRecyclerViewWrapperAdapter
         }
     }
 
-    private void raiseOnGroupExpandedSequentially(int groupPositionStart, int count, boolean fromUser) {
+    private void raiseOnGroupExpandedSequentially(int groupPositionStart, int count, boolean fromUser, Object payload) {
         if (mOnGroupExpandListener != null) {
             for (int i = 0; i < count; i++) {
-                mOnGroupExpandListener.onGroupExpand(groupPositionStart + i, fromUser);
+                mOnGroupExpandListener.onGroupExpand(groupPositionStart + i, fromUser, payload);
             }
         }
     }

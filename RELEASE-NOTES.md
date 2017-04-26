@@ -1,6 +1,46 @@
+## 0.10.5
+[Bug fixes]
+- Fixed View.OVER_SCROLL_NEVER not work when dragging (issue #374)
+
+[Improvements]
+- Expose path segments for header footer adapter (PR #368, #373)
+- Updated support library to v25.3.0
+
+
+## 0.10.4
+[BREAKING CHANGE]
+- The `payload` parameter is added to `OnGroupExpandListener` and `OnGroupCollapseListener` (issue #350)
+  (commit: 353406ea43657dead1ba65207b95e9067e457f6d)
+
+[New features]
+- Added fine control of initial state of group items by
+  `ExpandableItemAdapter.getInitialGroupExpandedState()`  (issue #346)
+- Added variants of `expandGroup()`/`collapseGroup()` methods which has a `payload` parameter (issue #350)
+
+[Bug fixes]
+- Fixed NullPointerException issue (issue #358 & PR #362, thanks @polyak01 !)
+- Fix swipe amount not applied before laid out item views in proportional mode (issue #361)
+
+[Improvements]
+- Added scrolling support while dragging in NestedScrollView (issue #351)
+- Updated support library to v25.2.0
+
+
+
+## 0.10.3
+[Bug fixes]
+- Fixed IllegalStateException on touching a group item while RecyclerView is calculating layout (issue #339)
+- Fixed onBindGroupViewHolder()/onBindChildViewHolder() method with palyloads parameter not used bug
+
+[Improvements]
+- Reduce overdraws of "Button under swipeable item" (PR #331, thx. @AnirudhaAgashe)
+- Updated support library to v25.1.0
+
+
 ## 0.10.2
 [Bug fixes]
-- Fix createDraggingItemImage() method regression (issue #325)
+- Fixed createDraggingItemImage() method regression (issue #325)
+
 
 ## 0.10.1
 [Improvements]
@@ -14,7 +54,7 @@
 ## 0.10.0
 [New features]
 - Introduced ComposedAdapter
-- Introudced Headers and Footers support
+- Introduced Headers and Footers support
 - Added new demos for new adapter related features
 - Made dragging item appearance controllable (issue #193, #292)
 - Added AFTER_SWIPE_REACTION_DO_NOTHING (pull request #308)

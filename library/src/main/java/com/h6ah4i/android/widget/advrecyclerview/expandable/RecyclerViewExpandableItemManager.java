@@ -56,8 +56,9 @@ public class RecyclerViewExpandableItemManager implements ExpandableItemConstant
          *
          * @param groupPosition The group position that was expanded
          * @param fromUser      Whether the expand request is issued by a user operation
+         * @param payload       Optional parameter, use null to identify a "full" update of the group item
          */
-        void onGroupExpand(int groupPosition, boolean fromUser);
+        void onGroupExpand(int groupPosition, boolean fromUser, Object payload);
     }
 
     /**
@@ -69,8 +70,9 @@ public class RecyclerViewExpandableItemManager implements ExpandableItemConstant
          *
          * @param groupPosition The group position that was collapsed
          * @param fromUser      Whether the collapse request is issued by a user operation
+         * @param payload       Optional parameter, use null to identify a "full" update of the group item
          */
-        void onGroupCollapse(int groupPosition, boolean fromUser);
+        void onGroupCollapse(int groupPosition, boolean fromUser, Object payload);
     }
 
     // ---
@@ -257,6 +259,10 @@ public class RecyclerViewExpandableItemManager implements ExpandableItemConstant
             return false;
         }
 
+        if (mRecyclerView.isComputingLayout()) {
+            return false;
+        }
+
         final int touchX = (int) (e.getX() + 0.5f);
         final int touchY = (int) (e.getY() + 0.5f);
 
@@ -293,7 +299,7 @@ public class RecyclerViewExpandableItemManager implements ExpandableItemConstant
 
     /**
      * <p>Expand all groups.</p>
-     * <p>Note that this method does not invoke the {@link OnGroupExpandListener#onGroupExpand(int, boolean)} callback.</p>
+     * <p>Note that this method does not invoke the {@link OnGroupExpandListener#onGroupExpand(int, boolean, Object)} callback.</p>
      */
     public void expandAll() {
         if (mWrapperAdapter != null) {
@@ -303,7 +309,7 @@ public class RecyclerViewExpandableItemManager implements ExpandableItemConstant
 
     /**
      * <p>Collapse all groups.</p>
-     * <p>Note that this method does not invoke the {@link OnGroupCollapseListener#onGroupCollapse(int, boolean)} callback.</p>
+     * <p>Note that this method does not invoke the {@link OnGroupCollapseListener#onGroupCollapse(int, boolean, Object)} callback.</p>
      */
     public void collapseAll() {
         if (mWrapperAdapter != null) {
@@ -318,7 +324,18 @@ public class RecyclerViewExpandableItemManager implements ExpandableItemConstant
      * @return True if the group was expanded, false otherwise  (If the group was already expanded, this will return false)
      */
     public boolean expandGroup(int groupPosition) {
-        return (mWrapperAdapter != null) && mWrapperAdapter.expandGroup(groupPosition, false);
+        return expandGroup(groupPosition, null);
+    }
+
+    /**
+     * Expand a group.
+     *
+     * @param groupPosition The group position to be expanded
+     * @param payload Optional parameter, use null to identify a "full" update the group item
+     * @return True if the group was expanded, false otherwise  (If the group was already expanded, this will return false)
+     */
+    public boolean expandGroup(int groupPosition, Object payload) {
+        return (mWrapperAdapter != null) && mWrapperAdapter.expandGroup(groupPosition, false, payload);
     }
 
     /**
@@ -328,7 +345,18 @@ public class RecyclerViewExpandableItemManager implements ExpandableItemConstant
      * @return True if the group was collapsed, false otherwise  (If the group was already collapsed, this will return false)
      */
     public boolean collapseGroup(int groupPosition) {
-        return (mWrapperAdapter != null) && mWrapperAdapter.collapseGroup(groupPosition, false);
+        return collapseGroup(groupPosition, null);
+    }
+
+    /**
+     * Collapse a group.
+     *
+     * @param groupPosition The group position to be collapsed
+     * @param payload Optional parameter, use null to identify a "full" update the group item
+     * @return True if the group was collapsed, false otherwise  (If the group was already collapsed, this will return false)
+     */
+    public boolean collapseGroup(int groupPosition, Object payload) {
+        return (mWrapperAdapter != null) && mWrapperAdapter.collapseGroup(groupPosition, false, payload);
     }
 
     /**
@@ -547,8 +575,8 @@ public class RecyclerViewExpandableItemManager implements ExpandableItemConstant
      *
      * @param savedState    The saved state object
      * @param callHooks     Whether to call hook routines
-     *                      ({@link ExpandableItemAdapter#onHookGroupExpand(int, boolean)},
-     *                      {@link ExpandableItemAdapter#onHookGroupCollapse(int, boolean)})
+     *                      ({@link ExpandableItemAdapter#onHookGroupExpand(int, boolean, Object)},
+     *                      {@link ExpandableItemAdapter#onHookGroupCollapse(int, boolean, Object)})
      * @param callListeners Whether to invoke {@link OnGroupExpandListener} and/or {@link OnGroupCollapseListener} listener events
      */
     public void restoreState(@Nullable Parcelable savedState, boolean callHooks, boolean callListeners) {
